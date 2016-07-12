@@ -1,5 +1,5 @@
 {
-  "name": "timeseries.js",
+  "name": "timeseries",
   "version": "1.0.0",
   "description": "An extensive JavaScript library for time series analysis",
   "main": "timeseries.js",
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/vic317yeh/timeseries.js/issues"
   },
-  "homepage": "https://github.com/vic317yeh/timeseries.js#readme"
+  "homepage": "https://github.com/vic317yeh/timeseries.js#readme",
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
 }
