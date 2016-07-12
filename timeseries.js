@@ -48,13 +48,36 @@ Timeseries.prototype.min = function() {
 }
 
 Timeseries.prototype.mean = function() {
-	if (this.data.length == 0) {
-		return 0;
-	}
 	var sum = _.reduce(this.getValues(), function(sumsofar, val) {
 		return sumsofar + val;
-	}, 0)
+	}, 0);
 	return sum/this.data.length;;
+}
+
+Timeseries.prototype.mode = function() {
+	var counts = {}, maxFreq = 0, mode;
+	_.each(this.getValues(), function(val) {
+		counts[val] = (counts[val] || 0) + 1;
+		if (maxFreq < counts[val]) {
+			maxFreq = counts[val];
+			mode = val;
+		}
+	});
+	return mode;
+}
+
+Timeseries.prototype.sd = function() {
+	var avg = this.mean(), sum = 0;
+	_.each(this.getValues(), function(val) {
+		var diff = val - avg;
+		sum +=  diff * diff;
+	});
+	return Math.sqrt(sum/(this.data.length-1));
+}
+
+Timeseries.prototype.var = function() {
+	var sd = this.sd();
+	return sd * sd;
 }
 
 /*
