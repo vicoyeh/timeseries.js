@@ -1,0 +1,24 @@
+{
+  "name": "timeseries.js",
+  "version": "1.0.0",
+  "description": "An extensive JavaScript library for time series analysis",
+  "main": "timeseries.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vic317yeh/timeseries.js.git"
+  },
+  "keywords": [
+    "time series",
+    "statistics",
+    "analysis"
+  ],
+  "author": "Kuan-Hsuan Yeh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vic317yeh/timeseries.js/issues"
+  },
+  "homepage": "https://github.com/vic317yeh/timeseries.js#readme"
+}
