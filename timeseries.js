@@ -121,9 +121,11 @@ Timeseries.prototype.var = function() {
   return sum/(this.data.length-1);
 }
 
-Timeseries.prototype.ma = function(options) {
+// simple moving average
+Timeseries.prototype.sma = function(options) {
+	var values = this.getValues();
 	options = _.extend({
-		period: 10
+		period: (values.length > 10) ? 10: values.length
 	}, options);
 	var period = options.period,
 			values = this.getValues(),
@@ -135,7 +137,35 @@ Timeseries.prototype.ma = function(options) {
 		for (j = i; j < i+period; j++) {
 			sum += values[j];
 		}
-		result.push(sum/period);
+		result.push({date: this.data[i+period-1]['date'],
+								 value: sum/period});
+	}
+	return result;
+}
+
+// exponential moving average
+Timeseries.prototype.ema = function(options) {
+	var values = this.getValues();
+	options = _.extend({
+		period: (values.length > 10) ? 10: values.length
+	}, options);
+	var period = options.period,
+			values = this.getValues(),
+			result = _.times(period-1, _.constant(null)),
+			w = 2/(period+1),
+			prev = 0,
+			i;
+	// get the first sma
+	for (i=0; i < period; i++) {
+		prev += values[i];
+	}
+	prev /= period;
+	result.push({date: this.data[period-1]['date'],
+							 value: prev});
+	for (i = period; i < this.data.length; i++) {
+		prev = (values[i] - prev) * w + prev; 
+		result.push({date: this.data[i]['date'],
+								 value: prev});
 	}
 	return result;
 }
@@ -147,6 +177,7 @@ Timeseries.prototype.ma = function(options) {
 */
 var Util = {};
 
+// todo: include rest of the data fields
 Util.convert =  function(data, options) {
   options = _.extend({
     date: 'date',
