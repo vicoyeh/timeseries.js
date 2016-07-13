@@ -54,7 +54,47 @@ Timeseries.prototype.mean = function() {
 	var sum = _.reduce(this.getValues(), function(sumsofar, val) {
 		return sumsofar + val;
 	}, 0)
-	return sum/this.data.length;;
+	return sum/this.data.length;
+}
+
+Timeseries.prototype.partition = function(data, left, right, pivotIndex) {
+	pivotIndex = this.partition(data, left, right, pivotIndex);
+	var pivotVal = data[pivotIndex]
+	data[pivotIndex] = data[right];
+	data[right] = pivotVal;
+	var fillPos = left;
+	for (var i = left; i < right; i++) {
+		if (data[i] < pivotVal) {
+			var temp = data[i];
+			data[i] = data[fillPos];
+			data[fillPos] = temp;
+			fillPos++;			
+		}		
+	}
+	var temp = data[fillPos];
+	data[fillPos] = data[right];
+	data[right] = temp;
+	return fillPos;
+}
+
+Timeseries.prototype.median = function() {
+	var left = 0;
+	var right = this.data.length - 1;
+	var medianIndex = Math.floor(this.data.length / 2);
+	var data_copy = this.getValues();
+	while (left < right) {
+		var pivotIndex = Math.floor((left + right) / 2);
+		if (medianIndex == pivotIndex) {
+			return data_copy[medianIndex];
+		}
+		else if (medianIndex < pivotIndex) {
+			right = pivotIndex - 1;
+		}
+		else {
+			left = pivotIndex + 1;
+		}
+	}
+	return data_copy[left];
 }
 
 /*
