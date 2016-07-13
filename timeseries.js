@@ -66,6 +66,7 @@ Timeseries.prototype.mode = function() {
 	return mode;
 }
 
+// sample standard deviation
 Timeseries.prototype.sd = function() {
 	var avg = this.mean(), sum = 0;
 	_.each(this.getValues(), function(val) {
@@ -75,9 +76,29 @@ Timeseries.prototype.sd = function() {
 	return Math.sqrt(sum/(this.data.length-1));
 }
 
+// variance
 Timeseries.prototype.var = function() {
 	var sd = this.sd();
 	return sd * sd;
+}
+
+Timeseries.prototype.ma = function(options) {
+	options = _.extend({
+		period: 10
+	}, options);
+	var period = options.period,
+			values = this.getValues(),
+			result = _.times(period-1, _.constant(null)),
+			sum = 0,
+			i, j;
+	for (i = 0; i <= this.data.length-period; i++) {
+		sum = 0;
+		for (j = i; j < i+period; j++) {
+			sum += values[j];
+		}
+		result.push(sum/period);
+	}
+	return result;
 }
 
 /*
