@@ -187,33 +187,35 @@ Timeseries.prototype.ema = function(options) {
 
 // linear interpolation
 Timeseries.prototype.linearInterpolate = function(date) {
-date = _.isDate(date) ? date : new Date(date);
-var boundary =  betweenDates(this.data, date);
-if (boundary.length === 2) {
-  var x1 = boundary[0]['date'], x2 = boundary[1]['date'],
-      y1 = boundary[0]['value'], y2 = boundary[1]['value'];
-  return y1 + (y2 - y1) * (date - x1) / (x2 - x1);
-} else if (boundary.length === 1) {
-  return boundary[0]['value'];
-} else {
-  return null;
-}
+  date = _.isDate(date) ? date : new Date(date);
+  var boundary =  betweenDates(this.data, date);
+  if (boundary.length === 2) {
+    var x1 = boundary[0]['date'], x2 = boundary[1]['date'],
+        y1 = boundary[0]['value'], y2 = boundary[1]['value'];
+    return y1 + (y2 - y1) * (date - x1) / (x2 - x1);
+  } else if (boundary.length === 1) {
+    return boundary[0]['value'];
+  } else {
+    return null;
+  }
 }
 
 // exponential interpolation
 Timeseries.prototype.exponentialInterpolate = function(date) {
-date = _.isDate(date) ? date : new Date(date);
-var boundary =  betweenDates(this.data, date);
-if (boundary.length === 2) {
-  var x1 = boundary[0]['date'], x2 = boundary[1]['date'],
-      y1 = boundary[0]['value'], y2 = boundary[1]['value'];
-  return y1 * Math.pow(y2 / y1, (date - x1) / (x2 - x1));
-} else if (boundary.length === 1) {
-  return boundary[0]['value'];
-} else {
-  return null;
+  date = _.isDate(date) ? date : new Date(date);
+  var boundary =  betweenDates(this.data, date);
+  if (boundary.length === 2) {
+    var x1 = boundary[0]['date'], x2 = boundary[1]['date'],
+        y1 = boundary[0]['value'], y2 = boundary[1]['value'];
+    return y1 * Math.pow(y2 / y1, (date - x1) / (x2 - x1));
+  } else if (boundary.length === 1) {
+    return boundary[0]['value'];
+  } else {
+    return null;
+  }
 }
-}
+
+
 
 
 /*
