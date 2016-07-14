@@ -103,12 +103,18 @@ Timeseries.prototype.mode = function() {
 }
 
 // sample standard deviation
-Timeseries.prototype.sd = function() {
-  return Math.sqrt(this.var());
+Timeseries.prototype.sample_sd = function() {
+  return Math.sqrt(this.sample_var());
 }
 
-// variance
-Timeseries.prototype.var = function() {
+// population standard deviation
+Timeseries.prototype.pop_sd = function() {
+  return Math.sqrt(this.pop_var());
+}
+
+
+// sample variance
+Timeseries.prototype.sample_var = function() {
   var avg = this.mean(), sum = 0;
   _.each(this.getValues(), function(val) {
     var diff = val - avg;
@@ -117,13 +123,27 @@ Timeseries.prototype.var = function() {
   return sum/(this.data.length-1);
 }
 
-//covariance 
+// population variance
+Timeseries.prototype.pop_var = function() {
+  var avg = this.mean(), sum = 0;
+  _.each(this.getValues(), function(val) {
+    var diff = val - avg;
+    sum +=  diff * diff;
+  });
+  return sum/(this.data.length);
+}
+
+
+// covariance 
 Timeseries.prototype.cov = function(timeSeriesTwo) {
   var values = this.getValues();
   var valuesTwo = timeSeriesTwo.getValues();
   if (values.length != valuesTwo.length) {
     throw "Cannot calculate covariance of two different length time series";
   }
+
+  console.log(values);
+  console.log(valuesTwo);
 
   var period = this.options.period;
   var periodTwo = timeSeriesTwo.options.period;
@@ -213,6 +233,20 @@ Timeseries.prototype.exponentialInterpolate = function(date) {
   } else {
     return null;
   }
+}
+
+// linear regression
+Timeseries.prototype.linearRegression = function() {
+  var variance = this.pop_var();
+  var period = this.options.period;
+  var timeIntervals = _.range(0, this.getValues().length * period, period);
+  var periodTimeSeries = Timeseries(ts.util.convertArray(timeIntervals));
+  var covariance = this.cov(periodTimeSeries);
+  var b = covariance / variance;
+  var dataMean = this.mean();
+  var timeMean = periodTimeSeries.mean();
+  var a = dataMean - b * timeMean;
+  return [a, b];
 }
 
 
