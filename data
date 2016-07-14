@@ -1,7 +1,13 @@
+  var _ = require('underscore')
+  var ts = require('./timeseries')
+var tts = ts.create(ts.util.convert(data,{date:"food",value:"values"}))
+tts.linearInterpolate('2012-08-30')
+tts.exponentialInterpolate('2012-08-30')
+
  [
         {
             "values": -1.1618426259,
-            "food": "2012-08-28",
+            "food": "2012-08-27",
             "l": -2.6017329022,
             "u": 0.2949717757
         },
@@ -13,7 +19,7 @@
         },
         {
             "values": -0.3790770636,
-            "food": "2012-08-30",
+            "food": "2012-08-31",
             "l": -0.8712221305,
             "u": 0.0956413566
         },
@@ -24,3 +30,5 @@
             "u": 0.0717120241
         }
 ]
+
+
