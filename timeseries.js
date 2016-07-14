@@ -1,9 +1,5 @@
 var _ = require('underscore');
 
-var CONFIG = {
-  VERSION: '1.0.0'
-}
-
 /*
 |------------------------------
 | timeseries class
@@ -170,6 +166,36 @@ Timeseries.prototype.ema = function(options) {
 	return result;
 }
 
+// linear interpolation
+Timeseries.prototype.linearInterpolate = function(date) {
+date = _.isDate(date) ? date : new Date(date);
+var boundary =  betweenDates(this.data, date);
+if (boundary.length === 2) {
+  var x1 = boundary[0]['date'], x2 = boundary[1]['date'],
+      y1 = boundary[0]['value'], y2 = boundary[1]['value'];
+  return y1 + (y2 - y1) * (date - x1) / (x2 - x1);
+} else if (boundary.length === 1) {
+  return boundary[0]['value'];
+} else {
+  return null;
+}
+}
+
+// exponential interpolation
+Timeseries.prototype.exponentialInterpolate = function(date) {
+date = _.isDate(date) ? date : new Date(date);
+var boundary =  betweenDates(this.data, date);
+if (boundary.length === 2) {
+  var x1 = boundary[0]['date'], x2 = boundary[1]['date'],
+      y1 = boundary[0]['value'], y2 = boundary[1]['value'];
+  return y1 * Math.pow(y2 / y1, (date - x1) / (x2 - x1));
+} else if (boundary.length === 1) {
+  return boundary[0]['value'];
+} else {
+  return null;
+}
+}
+
 //test
 
 /*
@@ -181,21 +207,39 @@ var Util = {};
 
 // todo: include rest of the data fields
 Util.convert =  function(data, options) {
-  options = _.extend({
-    date: 'date',
-    value: 'value'
-  }, options);
-  return _.map(data, function(item) {
-    return {date: new Date(item[options.date]), 
-            value: item[options.value]};
-  });
+options = _.extend({
+  date: 'date',
+  value: 'value'
+}, options);
+return _.map(data, function(item) {
+  return {date: new Date(item[options.date]), 
+          value: item[options.value]};
+});
 }
 
 Util.convertArray = function(data, options) {
-  return _.map(data, function(val) {
-    return {date: new Date(),
-            value: val}
-  })
+return _.map(data, function(val) {
+  return {date: new Date(),
+          value: val}
+})
+}
+
+/*
+|------------------------------
+| helpfer functions
+|------------------------------
+*/
+function betweenDates(data, target) {
+var i;
+for (i = 0; i < data.length; i++) {
+		if (target < data[i]['date']) {
+			if (i === 0) { return []; } 
+			else { return [data[i-1],  data[i]]; }
+		} else if (target.getTime() === data[i]['date'].getTime()) {
+			return [data[i]];
+		}
+	};
+	return [];
 }
 
 module.exports = {
