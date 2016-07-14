@@ -170,6 +170,8 @@ Timeseries.prototype.ema = function(options) {
 	return result;
 }
 
+//test
+
 /*
 |------------------------------
 | utility functions
