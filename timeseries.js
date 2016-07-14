@@ -142,9 +142,6 @@ Timeseries.prototype.cov = function(timeSeriesTwo) {
     throw "Cannot calculate covariance of two different length time series";
   }
 
-  console.log(values);
-  console.log(valuesTwo);
-
   var period = this.options.period;
   var periodTwo = timeSeriesTwo.options.period;
   var mean = this.mean();
@@ -242,11 +239,20 @@ Timeseries.prototype.linearRegression = function() {
   var timeIntervals = _.range(0, this.getValues().length * period, period);
   var periodTimeSeries = Timeseries(ts.util.convertArray(timeIntervals));
   var covariance = this.cov(periodTimeSeries);
-  var b = covariance / variance;
+  var m;
+  if (covariance == 0) {
+    if (variance == 0) {
+      m = 0;
+    } else {
+      m = Infinity;
+    }
+  } else {
+    m = variance / covariance;
+  }
   var dataMean = this.mean();
   var timeMean = periodTimeSeries.mean();
-  var a = dataMean - b * timeMean;
-  return [a, b];
+  var b = dataMean - m * timeMean;
+  return [m, b];
 }
 
 
