@@ -10,7 +10,7 @@ var Timeseries = function(data, options) {
     return new Timeseries(data, options);
   }
   this.data = data || [];
-  this.options = options || {};
+  this.options = options || {period: 1};
   return this; 
 }
 
@@ -117,6 +117,25 @@ Timeseries.prototype.var = function() {
   return sum/(this.data.length-1);
 }
 
+//covariance 
+Timeseries.prototype.cov = function(timeSeriesTwo) {
+  var values = this.getValues();
+  var valuesTwo = timeSeriesTwo.getValues();
+  if (values.length != valuesTwo.length) {
+    throw "Cannot calculate covariance of two different length time series";
+  }
+
+  var period = this.options.period;
+  var periodTwo = timeSeriesTwo.options.period;
+  var mean = this.mean();
+  var meanTwo = timeSeriesTwo.mean();
+  var sum = 0;
+  for(var i = 0; i<values.length; i++) {
+    sum += (values[i] - mean) * (valuesTwo[i] - meanTwo);
+  }
+  return sum/values.length;
+}
+
 // simple moving average
 Timeseries.prototype.sma = function(options) {
 	var values = this.getValues();
@@ -196,7 +215,6 @@ if (boundary.length === 2) {
 }
 }
 
-//test
 
 /*
 |------------------------------
