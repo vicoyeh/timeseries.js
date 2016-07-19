@@ -77,7 +77,7 @@ Timeseries.prototype.median = function() {
   while (left < right) {
     var pivotIndex = Math.floor((left + right) / 2);
     pivotIndex = partition(dataCopy, left, right, pivotIndex);
-    if (medianIndex == pivotIndex) {
+    if (medianIndex === pivotIndex) {
       return dataCopy[medianIndex];
     }
     else if (medianIndex < pivotIndex) {
@@ -103,18 +103,17 @@ Timeseries.prototype.mode = function() {
 }
 
 // sample standard deviation
-Timeseries.prototype.sample_sd = function() {
-  return Math.sqrt(this.sample_var());
+Timeseries.prototype.ssd = function() {
+  return Math.sqrt(this.svar());
 }
 
 // population standard deviation
-Timeseries.prototype.pop_sd = function() {
-  return Math.sqrt(this.pop_var());
+Timeseries.prototype.psd = function() {
+  return Math.sqrt(this.pvar());
 }
 
-
 // sample variance
-Timeseries.prototype.sample_var = function() {
+Timeseries.prototype.svar = function() {
   var avg = this.mean(), sum = 0;
   _.each(this.getValues(), function(val) {
     var diff = val - avg;
@@ -124,7 +123,7 @@ Timeseries.prototype.sample_var = function() {
 }
 
 // population variance
-Timeseries.prototype.pop_var = function() {
+Timeseries.prototype.pvar = function() {
   var avg = this.mean(), sum = 0;
   _.each(this.getValues(), function(val) {
     var diff = val - avg;
@@ -132,7 +131,6 @@ Timeseries.prototype.pop_var = function() {
   });
   return sum/(this.data.length);
 }
-
 
 // covariance 
 Timeseries.prototype.cov = function(timeSeriesTwo) {
@@ -240,8 +238,8 @@ Timeseries.prototype.linearRegression = function() {
   var periodTimeSeries = Timeseries(ts.util.convertArray(timeIntervals));
   var covariance = this.cov(periodTimeSeries);
   var m;
-  if (covariance == 0) {
-    if (variance == 0) {
+  if (covariance === 0) {
+    if (variance === 0) {
       m = 0;
     } else {
       m = Infinity;
@@ -255,9 +253,6 @@ Timeseries.prototype.linearRegression = function() {
   return [m, b];
 }
 
-
-
-
 /*
 |------------------------------
 | utility functions
@@ -267,21 +262,21 @@ var Util = {};
 
 // todo: include rest of the data fields
 Util.convert =  function(data, options) {
-options = _.extend({
-  date: 'date',
-  value: 'value'
-}, options);
-return _.map(data, function(item) {
-  return {date: new Date(item[options.date]), 
-          value: item[options.value]};
-});
+  options = _.extend({
+    date: 'date',
+    value: 'value'
+  }, options);
+  return _.map(data, function(item) {
+    return {date: new Date(item[options.date]), 
+            value: item[options.value]};
+  });
 }
 
 Util.convertArray = function(data, options) {
-return _.map(data, function(val) {
-  return {date: new Date(),
-          value: val}
-})
+  return _.map(data, function(val) {
+    return {date: new Date(),
+            value: val}
+  });
 }
 
 /*
@@ -290,8 +285,8 @@ return _.map(data, function(val) {
 |------------------------------
 */
 function betweenDates(data, target) {
-var i;
-for (i = 0; i < data.length; i++) {
+  var i;
+  for (i = 0; i < data.length; i++) {
 		if (target < data[i]['date']) {
 			if (i === 0) { return []; } 
 			else { return [data[i-1],  data[i]]; }
