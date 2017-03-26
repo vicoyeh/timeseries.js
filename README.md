@@ -1,5 +1,5 @@
 # timeseries.js
-An simple JavaScript library for time series analysis.
+A simple JavaScript library for time series analysis.
 
 [description]
 
